@@ -6,11 +6,11 @@ Purpose:
 Quest:
    1. Make a program that will print words from file
    2. Use random module to pick one word and print
-   3. Make user to play hangman( by quessing letters)
+   3. Make user to play hangman( by guessing letters)
    4. Make a function to add new words
   
 Dane:
-   string
+   string       https://docs.python.org/3/library/string.html
    random		https://docs.python.org/3/library/random.html
    dictionaries	https://docs.python.org/3/tutorial/datastructures.html
    lists		https://docs.python.org/3/tutorial/datastructures.html
