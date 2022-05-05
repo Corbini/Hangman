@@ -1,8 +1,16 @@
 import random
-
+from enum import Enum
 
 words_list = []
 player_progress = ""
+health = 0
+used_guesses = []
+
+
+class Checks (Enum):
+    none_actions = 0
+    win = 1
+    minus_health = 2
 
 
 def load_from_file(words_file):
@@ -12,17 +20,26 @@ def load_from_file(words_file):
 
 
 def check_letters(word):
-    for letter in word:
-        if word == "!q":
-            return True
-        if letter.isupper():
-            print("Don't use Upper letters")
-            return False
-        if letter.isalpha():
-            return True
-        else:
-            print("Don't use symbols")
-            return False
+    if word == "!q":
+        return True
+
+    if word == "":
+        return False
+
+    if word.isupper():
+        print("Don't use Upper letters")
+        return False
+
+    if not word.isalpha():
+        print("Don't use symbols")
+        return False
+
+    if word in words_list:
+        print("You wrote it earlier")
+        return False
+
+    words_list.append(word)
+    return True
 
 
 def player_input():
@@ -37,17 +54,25 @@ def check_for_words(question, word):
     if question == word:
         global player_progress
         player_progress = word
-        return True
-    return False
+        return Checks.win
+    return Checks.minus_health
 
 
 def check_for_letters(letter, word):
-    if letter in word:
-        # player_progress[word.] = letter
-        pass
+    global player_progress
+
+    temp_progress = Checks.minus_health
+    i = 0
+    for w in word:
+        if letter == w:
+            player_progress = player_progress[:i] + letter + player_progress[i+1:]
+            print("got a letter")
+            temp_progress = Checks.none_actions
+        i += 1
+
     if player_progress == word:
-        return True
-    return False
+        temp_progress = Checks.win
+    return temp_progress
 
 
 def check(question, word):
@@ -60,10 +85,16 @@ def check(question, word):
 def random_word():
     random_int = random.randint(0, len(words_list))
     word_to_guess = words_list[random_int][:-1]
-    print("word to guess: ", word_to_guess)
 
     global player_progress
     player_progress = "_" * len(word_to_guess)
+
+    global health
+    health = 8
+
+    global used_guesses
+    del used_guesses
+    used_guesses = []
 
     return word_to_guess
 
@@ -78,22 +109,32 @@ def main():
 
     word_to_guess = random_word()
     global player_progress
+    global health
 
     while True:
         print(player_progress)
 
         question = player_input()
-        print(question)
 
         if question == "!q":
             print("Bye")
             return
 
-        if check(question, word_to_guess):
+        check_status = check(question, word_to_guess)
+
+        if check_status == Checks.win:
             print("you win")
             word_to_guess = random_word()
+            continue
 
-            pass
+        if check_status == Checks.minus_health:
+            health -= 1
+            if health == 0:
+                print("you lost")
+                word_to_guess = random_word()
+            else:
+                print("you lost a health. Remaining: ", health)
+            continue
 
 
 random.seed()
