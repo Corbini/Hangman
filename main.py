@@ -1,6 +1,8 @@
 import random
 
+
 words_list = []
+player_progress = ""
 
 
 def load_from_file(words_file):
@@ -32,11 +34,20 @@ def player_input():
 
 
 def check_for_words(question, word):
-    return True
+    if question == word:
+        global player_progress
+        player_progress = word
+        return True
+    return False
 
 
 def check_for_letters(letter, word):
-    return True
+    if letter in word:
+        # player_progress[word.] = letter
+        pass
+    if player_progress == word:
+        return True
+    return False
 
 
 def check(question, word):
@@ -44,6 +55,17 @@ def check(question, word):
         return check_for_words(question, word)
     else:
         return check_for_letters(question, word)
+
+
+def random_word():
+    random_int = random.randint(0, len(words_list))
+    word_to_guess = words_list[random_int][:-1]
+    print("word to guess: ", word_to_guess)
+
+    global player_progress
+    player_progress = "_" * len(word_to_guess)
+
+    return word_to_guess
 
 
 def main():
@@ -54,11 +76,12 @@ def main():
     print("Write !q do quit")
     print("Write letter or word to guess")
 
-    random_int = random.randint(0, len(words_list))
-    word_to_guess = words_list[random_int]
-    print("word to guess: ", word_to_guess)
+    word_to_guess = random_word()
+    global player_progress
 
     while True:
+        print(player_progress)
+
         question = player_input()
         print(question)
 
@@ -67,7 +90,9 @@ def main():
             return
 
         if check(question, word_to_guess):
-            # you win, next round
+            print("you win")
+            word_to_guess = random_word()
+
             pass
 
 
